@@ -1,0 +1,18 @@
+import styled from 'styled-components'
+import { Card } from '../../../Card'
+
+export const ModalWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+`
+
+export const ModalContentWrapper = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  width: 300px;
+`

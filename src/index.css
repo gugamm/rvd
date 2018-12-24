@@ -1,0 +1,16 @@
+body {
+  margin: 0px;
+  height: 100%;
+}
+
+html {
+  height: 100%;
+}
+
+#root {
+  height: 100%
+}
+
+.banana {
+  border: 1px solid green;
+}
