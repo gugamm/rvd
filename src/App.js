@@ -32,10 +32,10 @@ class App extends Component {
   }
 
   handleDeleteScene = (_, { sceneId }) => {
-    const { appState } = this.props
+    const { appState, componentsById } = this.props
     const scene = appState.scenes.byId[sceneId]
     const sceneComponentIds = scene.componentIds
-    sceneComponentIds.forEach(sceneComponentId => this.props.deleteComponent(sceneComponentId))
+    sceneComponentIds.forEach(sceneComponentId => this.props.deleteComponents(sceneComponentId, generateComponentIdsFromParent(sceneComponentId, componentsById)))
     this.props.deleteScene(sceneId)
     this.props.setActiveScene(null)
     this.props.setActiveTab(null)
