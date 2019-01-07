@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import * as R from 'ramda'
-import { MODIFY_COMPONENT, INSERT_INSIDE, INSERT_INSIDE_AFTER, INSERT_INSIDE_BEFORE, DELETE_COMPONENT, INSERT_CUSTOM_INSIDE, INSERT_CUSTOM_INSIDE_AFTER, INSERT_CUSTOM_INSIDE_BEFORE } from './types'
+import { MODIFY_COMPONENT, INSERT_INSIDE, INSERT_INSIDE_AFTER, INSERT_INSIDE_BEFORE, DELETE_COMPONENTS, INSERT_CUSTOM_INSIDE, INSERT_CUSTOM_INSIDE_AFTER, INSERT_CUSTOM_INSIDE_BEFORE } from './types'
 import { APPEND_COMPONENT, INSERT_AFTER, INSERT_BEFORE, APPEND_COMPONENT_TREE, INSERT_TREE_AFTER, INSERT_TREE_BEFORE } from '../scenes/types'
 
 const componentReducer = (prevState = null, action) => {
@@ -129,41 +129,30 @@ const byIdReducer = (prevState = INITIAL_STATE.byId, action) => {
         [parentId]: componentReducer(prevComponent, action)
       }
     }
-    case DELETE_COMPONENT: {
-      return deleteComponent(prevState, action.payload)
+    case DELETE_COMPONENTS: {
+      const { componentIds, rootComponentId } = action.payload
+      let nextState = { ...prevState }
+      const rootComponent = prevState[rootComponentId]
+
+      if (rootComponent.parentId) {
+        const parentComponent = nextState[rootComponent.parentId]
+        nextState = {
+          ...nextState,
+          [rootComponent.parentId]: {
+            ...parentComponent,
+            children: R.filter((childId) => !R.equals(childId, rootComponentId), parentComponent.children)
+          }
+        }
+      }
+
+      for (const idToDelete of componentIds) {
+        delete nextState[idToDelete]
+      }
+
+      return nextState
     }
     default:
       return prevState
-  }
-}
-
-const deleteComponent = (byId, componentId) => {
-  let nextState = { ...byId }
-  const component = nextState[componentId]
-  const { children, parentId } = component
-
-  if (children) {
-    for (const child of children) {
-      nextState = deleteComponent(nextState, child)
-    }
-  }
-
-  delete nextState[componentId]
-
-  if (parentId) {
-    nextState = {
-      ...nextState,
-      [parentId]: deleteChildComponent(nextState[parentId], componentId)
-    }
-  }
-
-  return nextState
-}
-
-const deleteChildComponent = (prevComponent, childIdToRemove) => {
-  return {
-    ...prevComponent,
-    children: R.filter((childId) => childId !== childIdToRemove, prevComponent.children)
   }
 }
 
@@ -183,8 +172,8 @@ const allIdsReducer = (prevState = INITIAL_STATE.allIds, action) => {
     case INSERT_CUSTOM_INSIDE_AFTER:
     case INSERT_CUSTOM_INSIDE_BEFORE:
       return [...prevState, ...action.payload.componentTree.allIds]
-    case DELETE_COMPONENT:
-      return R.filter((componentId) => componentId !== action.payload, prevState)
+    case DELETE_COMPONENTS:
+      return R.filter((id) => !R.contains(id, action.payload.componentIds), prevState)
     default:
       return prevState
   }

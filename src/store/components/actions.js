@@ -1,4 +1,4 @@
-import { MODIFY_COMPONENT, INSERT_INSIDE, INSERT_INSIDE_AFTER, INSERT_INSIDE_BEFORE, DELETE_COMPONENT, INSERT_CUSTOM_INSIDE, INSERT_CUSTOM_INSIDE_AFTER, INSERT_CUSTOM_INSIDE_BEFORE } from './types'
+import { MODIFY_COMPONENT, INSERT_INSIDE, INSERT_INSIDE_AFTER, INSERT_INSIDE_BEFORE, INSERT_CUSTOM_INSIDE, INSERT_CUSTOM_INSIDE_AFTER, INSERT_CUSTOM_INSIDE_BEFORE, DELETE_COMPONENTS } from './types'
 
 export const modifyComponent = (componentId, { target, key, value }) => ({
   type: MODIFY_COMPONENT,
@@ -62,7 +62,10 @@ export const insertInsideBefore = (parentId, beforeId, componentDescription) => 
   }
 })
 
-export const deleteComponent = (componentId) => ({
-  type: DELETE_COMPONENT,
-  payload: componentId
+export const deleteComponents = (rootComponentId, componentIds) => ({
+  type: DELETE_COMPONENTS,
+  payload: {
+    rootComponentId,
+    componentIds
+  }
 })

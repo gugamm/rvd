@@ -20,9 +20,9 @@ export const buttonStyleManager = (appState) => [
     target: 'props',
     modifiers: [
       {
-        label: 'Title',
+        label: 'Text',
         type: 'text',
-        key: 'title'
+        key: 'text'
       }
     ]
   },

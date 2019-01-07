@@ -137,28 +137,38 @@ class ComponentView extends React.Component {
 
 const componentDropTarget = {
   drop(props, monitor) {
+    const isOver = monitor.isOver({ shallow: true })
+
+    if (!isOver) {
+      return
+    }
+
     const { 
       componentDescription: targetComponent, dropTarget, insertComponentAfter, insertComponentBefore, 
       activeScene, setNoneDropTarget, insertInside, insertInsideAfter, insertInsideBefore,
       insertCustomInside, insertCustomInsideAfter, insertCustomInsideBefore, insertTreeAfter, insertTreeBefore
     } = props
     const { component } = monitor.getItem()
-    const parentId = targetComponent.name !== '@LAYOUT/BOX' ? targetComponent.parentId : targetComponent.id
-    const descriptionToInsert = component.__custom ? generateComponentsTreeFromCustomDescription(component.description, parentId) : component.generateInitialComponent(parentId)
 
     if (dropTarget.type === DropTypes.AFTER) {
+      const parentId = targetComponent.parentId
+      const descriptionToInsert = component.__custom ? generateComponentsTreeFromCustomDescription(component.description, parentId) : component.generateInitialComponent(parentId)
       if (targetComponent.parentId) {
-        component.__custom ? insertCustomInsideAfter(targetComponent.parentId, targetComponent.id, descriptionToInsert) : insertInsideAfter(targetComponent.parentId, targetComponent.id, descriptionToInsert)
+        component.__custom ? insertCustomInsideAfter(targetComponent.parentId, dropTarget.componentId, descriptionToInsert) : insertInsideAfter(targetComponent.parentId, dropTarget.componentId, descriptionToInsert)
       } else {
         component.__custom ? insertTreeAfter(activeScene, targetComponent.id, descriptionToInsert) : insertComponentAfter(activeScene, targetComponent.id, descriptionToInsert)
       }
     } else if (dropTarget.type === DropTypes.BEFORE) {
+      const parentId = targetComponent.parentId
+      const descriptionToInsert = component.__custom ? generateComponentsTreeFromCustomDescription(component.description, parentId) : component.generateInitialComponent(parentId)
       if (targetComponent.parentId) {
-        component.__custom ? insertCustomInsideBefore(targetComponent.parentId, targetComponent.id, descriptionToInsert) : insertInsideBefore(targetComponent.parentId, targetComponent.id, descriptionToInsert)
+        component.__custom ? insertCustomInsideBefore(targetComponent.parentId, dropTarget.componentId, descriptionToInsert) : insertInsideBefore(targetComponent.parentId, dropTarget.componentId, descriptionToInsert)
       } else {
         component.__custom ? insertTreeBefore(activeScene, targetComponent.id, descriptionToInsert) : insertComponentBefore(activeScene, targetComponent.id, descriptionToInsert)
       }
     } else if (dropTarget.type === DropTypes.INSIDE) {
+      const parentId = targetComponent.id
+      const descriptionToInsert = component.__custom ? generateComponentsTreeFromCustomDescription(component.description, parentId) : component.generateInitialComponent(parentId)
       component.__custom ? insertCustomInside(targetComponent.id, descriptionToInsert) : insertInside(targetComponent.id, descriptionToInsert)
     }
 

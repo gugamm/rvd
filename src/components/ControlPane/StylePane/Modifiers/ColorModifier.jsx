@@ -4,17 +4,23 @@ import { ChromePicker  } from 'react-color'
 import { ModifierWrapper, ModifierLabel, ModifierInput } from './styledComponents'
 import * as componentsOperations from '../../../../store/components/operations'
 
-const popoverStyle = {
+const pickerModalStyle = {
   position: 'absolute',
+  height: '100%',
   zIndex: '2'
 }
 
-const pickerContainerStyle = {
+const pickerBackdropStyle = {
   position: 'fixed',
   top: '0px',
   bottom: '0px',
   left: '0px',
   right: '0px'
+}
+
+const pickerModalContainerStyle = {
+  position: 'relative',
+  height: 'auto'
 }
 
 class ColorModifier extends React.Component {
@@ -40,7 +46,7 @@ class ColorModifier extends React.Component {
 
     modifyComponent(activeComponent.id, {
       key,
-      target, 
+      target,
       value: nextValue
     })
     this.setState({
@@ -60,12 +66,14 @@ class ColorModifier extends React.Component {
         <div>
           <ModifierInput type='text' value={modifierValue} onClick={this.togglePicker} readOnly />
           {this.state.displayPicker && (
-            <div>
-              <div style={pickerContainerStyle} onClick={this.togglePicker} />
-              <div style={popoverStyle}>
-                <ChromePicker color={this.state.selectedColor} onChange={this.handleChange} />
+            <>
+              <div style={pickerBackdropStyle} onClick={this.togglePicker} />
+              <div style={pickerModalContainerStyle}>
+                <div style={pickerModalStyle}>
+                  <ChromePicker color={this.state.selectedColor} onChange={this.handleChange} />
+                </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </ModifierWrapper>

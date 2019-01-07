@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import * as R from 'ramda'
 import { ADD_SCENE, DELETE_SCENE, RENAME_SCENE } from '../app/types'
-import { DELETE_COMPONENT } from '../components/types'
+import { DELETE_COMPONENTS } from '../components/types'
 import { APPEND_COMPONENT, INSERT_AFTER, INSERT_BEFORE, APPEND_COMPONENT_TREE, INSERT_TREE_BEFORE, INSERT_TREE_AFTER } from './types'
 
 const INITIAL_SCENE_STATE = {
@@ -52,10 +52,10 @@ const sceneReducer = (prevState = INITIAL_SCENE_STATE, action) => {
         componentIds: R.append(rootComponentId, prevState.componentIds)
       }
     }
-    case DELETE_COMPONENT:
+    case DELETE_COMPONENTS:
       return {
         ...prevState,
-        componentIds: R.filter((componentId) => componentId !== action.payload, prevState.componentIds)
+        componentIds: R.filter((componentId) => !R.contains(componentId, action.payload.componentIds), prevState.componentIds)
       }
     default:
       return prevState
@@ -89,7 +89,7 @@ export const byIdReducer = (prevState = INITIAL_STATE.byId, action) => {
         [action.payload.sceneId]: sceneReducer(prevState[action.payload.sceneId], action)
       }
     }
-    case DELETE_COMPONENT: {
+    case DELETE_COMPONENTS: {
       return R.map((prevScene) => sceneReducer(prevScene, action), prevState)
     }
     default:

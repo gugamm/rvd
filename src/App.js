@@ -7,6 +7,7 @@ import * as componentsOperations from './store/components/operations'
 import * as activeComponentOperations from './store/activeComponent/operations'
 import * as appOperations from './store/app/operations'
 import { ContextMenu, MenuItem } from 'react-contextmenu'
+import { generateComponentIdsFromParent } from './utils/elements'
 
 const styles = {
   appContainer: {
@@ -53,12 +54,13 @@ class App extends Component {
   }
 
   handleKeyDown = (evt) => {
-    const { activeComponent, deleteComponent, setActiveComponent } = this.props
+    const { activeComponent, deleteComponents, setActiveComponent, componentsById } = this.props
     const isDeleteKey = evt.keyCode === 46 // delete
 
     if (isDeleteKey && activeComponent) {
       setActiveComponent(null)
-      deleteComponent(activeComponent)
+      const idsToDelete = generateComponentIdsFromParent(activeComponent, componentsById)
+      deleteComponents(activeComponent, idsToDelete)
     }
   }
 
@@ -103,14 +105,15 @@ const mapStateToProps = (state) => ({
   sceneIds: state.app.sceneIds,
   activeTab: state.activeTab,
   activeComponent: state.activeComponent,
-  appState: state
+  appState: state,
+  componentsById: state.components.byId
 })
 
 const mapDispatchToProps = {
   deleteScene: appOperations.deleteScene,
   setActiveTab: activeTabOperations.setActiveTab,
   setActiveScene: activeSceneOperations.setActiveScene,
-  deleteComponent: componentsOperations.deleteComponent,
+  deleteComponents: componentsOperations.deleteComponents,
   setActiveComponent: activeComponentOperations.setActiveComponent
 }
 

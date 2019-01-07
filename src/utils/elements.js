@@ -261,6 +261,23 @@ const generateComponentFromCustomDescription = (componentDescription, parentId, 
   return component
 }
 
+export const generateComponentIdsFromParent = (parentId, tree) => {
+  const allIds = []
+
+  allIds.push(parentId)
+
+  const component = tree[parentId]
+
+  if (component.children && component.children.length) {
+    for (const childId of component.children) {
+      const idsFromChild = generateComponentIdsFromParent(childId, tree)
+      allIds.push(...idsFromChild)
+    }
+  }
+
+  return allIds
+}
+
 export const ElementGenerators = {
   '@UI/TEXT': UIText,
   '@UI/BUTTON': UIButton,
